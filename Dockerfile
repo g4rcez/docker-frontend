@@ -7,9 +7,8 @@ LABEL name="docker-frontend"
 RUN apt update
 RUN apt install -y curl 
 
-RUN curl -fsSL https://deb.nodesource.com/setup_15.x | sh -
-RUN apt install -y nodejs
-
+RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
+RUN apt-get install -y nodejs
 
 RUN apt-get update && \
   apt-get install --no-install-recommends -y \
@@ -38,6 +37,9 @@ RUN apt-get update && \
 
 RUN npm i -g npm@latest
 RUN npm install -g yarn@latest
+RUN npm install -g pnpm@latest
+
+RUN pnpm setup
 
 ENV TERM xterm
 ENV npm_config_loglevel warn
@@ -47,8 +49,7 @@ RUN node -p process.versions
 RUN mkdir /app
 WORKDIR /app
 
-RUN yarn add -D -E cypress typescript 
+RUN pnpm install axios axios-retry date-fns react react-dom brouther react-router-dom react-router typescript cypress jest
 RUN $(npm bin)/cypress install
-RUN yarn add @arcanishq/styleguide axios axios-retry date-fns
-RUN rm -rf /app/yarn.lock
+RUN rm -rf /app/yarn.lock /app/pnpm-lock.yaml
 
